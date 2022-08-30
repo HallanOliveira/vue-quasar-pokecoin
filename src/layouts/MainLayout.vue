@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-secondary">
         <q-btn
           flat
           dense
@@ -12,10 +12,15 @@
         />
 
         <q-toolbar-title>
-          PokeCoin
+          <div class="text-primary">
+            PokeCoin
+            <q-avatar>
+              <img src="../../public/icons/Poke-Ball-Pokemon-SVG.png"/>
+            </q-avatar>
+          </div>
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Desenvolvido por: hallan_douglas@hotmail.com</div>
       </q-toolbar>
     </q-header>
 
@@ -51,45 +56,52 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
+    title: 'Novo Pokemon',
+    caption: 'adicionar novo Pokemon à carteira.',
+    icon: 'fas fa-plus',
+    color: 'secondary',
     link: 'https://quasar.dev'
   },
   {
-    title: 'Github',
+    title: 'Vender Pokemon',
     caption: 'github.com/quasarframework',
-    icon: 'code',
+    icon: 'fa-light fa-circle-dollar',
+    color: 'secondary',
     link: 'https://github.com/quasarframework'
   },
   {
     title: 'Discord Chat Channel',
     caption: 'chat.quasar.dev',
     icon: 'chat',
+    color: 'secondary',
     link: 'https://chat.quasar.dev'
   },
   {
     title: 'Forum',
     caption: 'forum.quasar.dev',
     icon: 'record_voice_over',
+    color: 'secondary',
     link: 'https://forum.quasar.dev'
   },
   {
     title: 'Twitter',
     caption: '@quasarframework',
     icon: 'rss_feed',
+    color: 'secondary',
     link: 'https://twitter.quasar.dev'
   },
   {
     title: 'Facebook',
     caption: '@QuasarFramework',
     icon: 'public',
+    color: 'secondary',
     link: 'https://facebook.quasar.dev'
   },
   {
     title: 'Quasar Awesome',
     caption: 'Community Quasar projects',
     icon: 'favorite',
+    color: 'secondary',
     link: 'https://awesome.quasar.dev'
   }
 ]
