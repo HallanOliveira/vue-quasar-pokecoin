@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          PokeCoin
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
