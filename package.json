@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "build": "npx quasar build -m ssr",
-    "start": "node server.js",
+    "start": "cd dist/ssr; npm i; npm start",
     "heroku-postbuild": "yarn && yarn build"
   },
   "dependencies": {
