@@ -150,7 +150,7 @@
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
-const apiPokemon = 'https://pokeapi.co/api/v2/pokemon/'
+const API_LARAVEL = 'https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/'
 
 export default defineComponent({
   name: 'IndexPage',
@@ -201,27 +201,14 @@ export default defineComponent({
         image: this.form.img
       })
       localStorage.setItem('Pokemons', JSON.stringify(itens))
+      return true
     },
     async moreData () {
-      axios.get(apiPokemon + this.form.name.label).then((data) => {
-        this.baseExp = data.data.base_experience
-        axios.get(data.data.forms[0].url).then((data) => {
-          this.form.img = data.data.sprites.front_default
-        })
-      })
+      return true
     },
     getNames () {
-      const names = []
-      axios.get(apiPokemon + '?limit=9999').then((data) => {
-        data.data.results.forEach((value, key) => {
-          names.push({
-            label: value.name,
-            value: key,
-            description: value.name
-          })
-          this.optionsNames = names
-        })
-      })
+      const test = axios.get(API_LARAVEL)
+      console.log(test)
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
@@ -229,7 +216,11 @@ export default defineComponent({
     },
     async addPokemon () {
       if (this.form.name && this.form.price && this.form.date) {
-        await this.moreData().then(this.setLocalPokemons()).then(this.resetModal())
+        const test = await this.moreData()
+        const test2 = await this.setLocalPokemons()
+        if (test && test2) {
+          this.resetModal()
+        }
       }
     },
     resetModal (sell = false) {
@@ -249,7 +240,8 @@ export default defineComponent({
       return pokemon.img ?? this.emptyPhoto
     },
     getAmountApplied () {
-
+      const pokemons = this.getLocalPokemons()
+      pokemons.forEach(() => {})
     },
     getAmountCurrent () {
 
