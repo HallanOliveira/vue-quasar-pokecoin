@@ -137,6 +137,7 @@
               input-class="text-right"
             />
           </div>
+
           <div align="right" class="q-pa-md">
             <q-btn color="primary" label="Cancelar" @click="resetModal(true)"/>
             <q-btn class="q-ml-md" color="secondary" label="Vender" @click="addPokemon" />
