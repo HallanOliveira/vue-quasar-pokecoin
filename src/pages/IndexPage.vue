@@ -7,8 +7,8 @@
         <q-btn color="green" glossy label="Adicionar Pokemon" icon="fas fa-plus" @click="modal=true"/>
       </div>
       <div align="right" class="col-3 q-pa-md text-h6">
-       Valor total investido: $ {{bitcoinPrice}} <br/>
-       Valor atual da carteira: $ {{bitcoinPrice}}
+       Valor total investido: $ {{getAmountApplied()}} <br/>
+       Valor atual da carteira: $ {{getAmountCurrent()}}
       </div>
     </div>
     <div class="row q-pa-md">
@@ -18,7 +18,7 @@
         :key="index"
       >
       <img
-        :src="pokemon.image"
+        :src="getThumb(pokemon)"
       />
       <div class="description-card">
         <div class="title-card"> {{ pokemon.name }} </div>
@@ -32,6 +32,7 @@
           color="secondary"
           label="Vender"
           icon="fa-solid fa-cart-shopping"
+          @click="sellModal"
         />
       </q-card-actions>
     </q-card>
@@ -46,7 +47,7 @@
               flat
               dense
               icon="fa-solid fa-xmark"
-              @click="resetModal"
+              @click="resetModal()"
             />
           </div>
         </div>
@@ -86,8 +87,59 @@
             />
           </div>
           <div align="right" class="q-pa-md">
-            <q-btn color="primary" label="Cancelar" @click="resetModal"/>
+            <q-btn color="primary" label="Cancelar" @click="resetModal()"/>
             <q-btn class="q-ml-md" color="secondary" label="Adicionar" @click="addPokemon" />
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+     <!-- modal sell pokemon -->
+    <q-dialog v-model="modalSell">
+      <q-card class="row modal-size">
+        <div class="row col-12">
+          <div class="title-modal col-9">Vender Pokemon {{form.name}}</div>
+          <div class="col-3" align="right">
+            <q-btn
+              flat
+              dense
+              icon="fa-solid fa-xmark"
+              @click="resetModal(true)"
+            />
+          </div>
+        </div>
+        <q-card-section class="col-12">
+          <div class="q-pa-md">
+            <q-select
+              filled
+              v-model="form.name"
+              label="Selecione o Pokemon"
+              :options="optionsNames"
+              disable
+            />
+          </div>
+          <div class="q-pa-md">
+            <q-input
+              filled
+              v-model="form.price"
+              label="Valor da venda"
+              mask="#.##"
+              reverse-fill-mask
+              fill-mask
+              input-class="text-right"
+            />
+          </div>
+          <div class="q-pa-md">
+            <q-input
+              v-model="form.date"
+              label="Data da venda"
+              filled
+              type="date"
+              input-class="text-right"
+            />
+          </div>
+          <div align="right" class="q-pa-md">
+            <q-btn color="primary" label="Cancelar" @click="resetModal(true)"/>
+            <q-btn class="q-ml-md" color="secondary" label="Vender" @click="addPokemon" />
           </div>
         </q-card-section>
       </q-card>
@@ -104,6 +156,7 @@ export default defineComponent({
   name: 'IndexPage',
   data () {
     return {
+      emptyPhoto: 'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg',
       bitcoinPrice: null,
       pokeCoinPrice: null,
       form: {
@@ -114,7 +167,8 @@ export default defineComponent({
         img: null
       },
       optionsNames: [],
-      modal: false
+      modal: false,
+      modalSell: false
     }
   },
   methods: {
@@ -178,11 +232,27 @@ export default defineComponent({
         await this.moreData().then(this.setLocalPokemons()).then(this.resetModal())
       }
     },
-    resetModal () {
+    resetModal (sell = false) {
       this.form.name = null
       this.form.price = null
       this.form.date = null
-      this.modal = false
+      if (sell) {
+        this.modalSell = false
+      } else {
+        this.modal = false
+      }
+    },
+    sellModal () {
+      this.modalSell = true
+    },
+    getThumb (pokemon) {
+      return pokemon.img ?? this.emptyPhoto
+    },
+    getAmountApplied () {
+
+    },
+    getAmountCurrent () {
+
     }
   },
   created () {
