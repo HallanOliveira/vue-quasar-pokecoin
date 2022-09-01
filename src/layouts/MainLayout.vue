@@ -33,7 +33,8 @@
         <q-item-label
           header
         >
-          Essential Links
+          <p class="text-h6 text-center text-secondary">Menu</p>
+          <q-separator/>
         </q-item-label>
 
         <EssentialLink
@@ -56,53 +57,17 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Novo Pokemon',
-    caption: 'adicionar novo Pokemon à carteira.',
-    icon: 'fas fa-plus',
+    title: 'Carteira',
+    caption: '',
+    icon: 'fas fa-wallet',
     color: 'secondary',
-    link: 'https://quasar.dev'
+    link: '/'
   },
   {
-    title: 'Vender Pokemon',
-    caption: 'github.com/quasarframework',
-    icon: 'fa-light fa-circle-dollar',
+    title: 'Histórico de Transações',
+    icon: 'fas fa-history',
     color: 'secondary',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    color: 'secondary',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    color: 'secondary',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    color: 'secondary',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    color: 'secondary',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    color: 'secondary',
-    link: 'https://awesome.quasar.dev'
+    link: '/transactions'
   }
 ]
 
