@@ -7,14 +7,14 @@
         <q-btn color="green" glossy label="Adicionar Pokemon" icon="fas fa-plus" @click="modal=true"/>
       </div>
       <div align="right" class="col-3 q-pa-md text-h6">
-       Valor total investido: $ {{getAmountApplied()}} <br/>
-       Valor atual da carteira: $ {{getAmountCurrent()}}
+       Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
+       Valor atual da carteira: ${{getAmountCurrent()}}
       </div>
     </div>
     <div class="row q-pa-md">
       <q-card
         class="cards"
-        v-for="(pokemon, index) in getLocalPokemons()"
+        v-for="(pokemon, index) in inventory"
         :key="index"
       >
       <img
@@ -23,8 +23,8 @@
       <div class="description-card">
         <div class="title-card"> {{ pokemon.name }} </div>
         <q-separator class="separator" color="secondary"/>
-        <div class="price">valor pagor: $ {{ formatPrice(pokemon.buyPrice) }} </div>
-        <div class="price">valor atual: $ {{ formatPrice(pokemon.buyPrice) }} </div>
+        <div class="price">Valor pago: $ {{ formatPrice(pokemon.buy_price) }} </div>
+        <div class="price">Valor atual: $ {{ calculatePokeCoin(pokemon.base_experience) }}</div>
       </div>
       <q-card-actions class="absolute-bottom">
         <q-btn
@@ -32,7 +32,7 @@
           color="secondary"
           label="Vender"
           icon="fa-solid fa-cart-shopping"
-          @click="sellModal"
+          @click="sellModal(pokemon)"
         />
       </q-card-actions>
     </q-card>
@@ -71,7 +71,7 @@
           <div class="q-pa-md">
             <q-input
               filled
-              v-model="form.price"
+              v-model="form.buyPrice"
               label="Digite o valor da compra"
               mask="#.##"
               reverse-fill-mask
@@ -81,7 +81,7 @@
           </div>
           <div class="q-pa-md">
             <q-input
-              v-model="form.date"
+              v-model="form.buyDate"
               filled
               type="date"
             />
@@ -97,7 +97,7 @@
     <q-dialog v-model="modalSell">
       <q-card class="row modal-size">
         <div class="row col-12">
-          <div class="title-modal col-9">Vender Pokemon {{form.name}}</div>
+          <div class="title-modal col-9">Vender Pokemon: {{formSell.name}}</div>
           <div class="col-3" align="right">
             <q-btn
               flat
@@ -111,7 +111,7 @@
           <div class="q-pa-md">
             <q-select
               filled
-              v-model="form.name"
+              v-model="formSell.name"
               label="Selecione o Pokemon"
               :options="optionsNames"
               disable
@@ -120,7 +120,7 @@
           <div class="q-pa-md">
             <q-input
               filled
-              v-model="form.price"
+              v-model="formSell.sellPrice"
               label="Valor da venda"
               mask="#.##"
               reverse-fill-mask
@@ -130,7 +130,7 @@
           </div>
           <div class="q-pa-md">
             <q-input
-              v-model="form.date"
+              v-model="formSell.sellDate"
               label="Data da venda"
               filled
               type="date"
@@ -139,7 +139,7 @@
           </div>
           <div align="right" class="q-pa-md">
             <q-btn color="primary" label="Cancelar" @click="resetModal(true)"/>
-            <q-btn class="q-ml-md" color="secondary" label="Vender" @click="addPokemon" />
+            <q-btn class="q-ml-md" color="secondary" label="Vender" @click="sellPokemon" />
           </div>
         </q-card-section>
       </q-card>
@@ -159,96 +159,105 @@ export default defineComponent({
       emptyPhoto: 'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg',
       bitcoinPrice: null,
       pokeCoinPrice: null,
+      amountApplied: null,
       form: {
+        id: null,
         name: null,
-        price: null,
-        date: null,
-        baseExp: null,
-        img: null
+        buyPrice: null,
+        buyDate: null
+      },
+      formSell: {
+        id: null,
+        name: null,
+        sellPrice: null,
+        sellDate: null
       },
       optionsNames: [],
       modal: false,
-      modalSell: false
+      modalSell: false,
+      inventory: []
     }
   },
   methods: {
     calculatePokeCoin (baseExperience) {
       if (baseExperience) {
         const unitPokePrice = this.bitcoinPrice * 0.00000001
-        return unitPokePrice * baseExperience
+        return this.formatPrice(unitPokePrice * baseExperience)
       }
-      return null
+      return '0.00'
     },
     getBitcoinPrice () {
       axios.get('https://blockchain.info/ticker').then((data) => {
         this.bitcoinPrice = data.data.USD.last
       })
     },
-    getLocalPokemons () {
-      const stringPokemons = localStorage.getItem('Pokemons')
-      if (stringPokemons) {
-        return JSON.parse(stringPokemons)
-      }
-      return []
-    },
-    async setLocalPokemons () {
-      const itens = this.getLocalPokemons()
-      itens.push({
-        name: this.form.name.label,
-        buyPrice: this.form.price,
-        buyDate: this.form.date,
-        baseExp: this.baseExp,
-        image: this.form.img
-      })
-      localStorage.setItem('Pokemons', JSON.stringify(itens))
-    },
-    async moreData () {
-      axios.get(apiPokemon + this.form.name.label).then((data) => {
-        this.baseExp = data.data.base_experience
-        axios.get(data.data.forms[0].url).then((data) => {
-          this.form.img = data.data.sprites.front_default
-        })
-      })
+    getPokemons () {
+      axios.get(apiPokemon + 'index').then((data) => { this.inventory = data.data })
     },
     getNames () {
-      axios.get(apiPokemon + 'names').then((data) => { console.log(data.data) })
+      axios.get(apiPokemon + 'names').then((data) => { this.optionsNames = data.data })
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     async addPokemon () {
-      if (this.form.name && this.form.price && this.form.date) {
-        await this.moreData().then(this.setLocalPokemons()).then(this.resetModal())
+      if (this.form.name && this.form.buyPrice && this.form.buyDate) {
+        this.form.id = this.form.name.value
+        this.form.name = this.form.name.label
+        const form = JSON.stringify(this.form)
+        axios.post(apiPokemon + 'create/' + form).then(() => {
+          this.getPokemons()
+          this.resetModal()
+        })
+      }
+    },
+    async sellPokemon () {
+      if (this.formSell.id && this.formSell.sellPrice && this.formSell.sellDate) {
+        const form = JSON.stringify(this.formSell)
+        axios.post(apiPokemon + 'sellPokemon/' + form).then(() => {
+          this.getPokemons()
+          this.resetModal(true)
+        })
       }
     },
     resetModal (sell = false) {
-      this.form.name = null
-      this.form.price = null
-      this.form.date = null
       if (sell) {
+        this.formSell.id = null
+        this.formSell.name = null
+        this.formSell.sellPrice = null
+        this.formSell.sellDate = null
         this.modalSell = false
       } else {
+        this.form.id = null
+        this.form.name = null
+        this.form.buyPrice = null
+        this.form.buyDate = null
         this.modal = false
       }
     },
-    sellModal () {
+    sellModal (pokemon) {
+      this.formSell.id = pokemon.id
+      this.formSell.name = pokemon.name
       this.modalSell = true
     },
     getThumb (pokemon) {
-      return pokemon.img ?? this.emptyPhoto
+      return pokemon.imagem ?? this.emptyPhoto
     },
     getAmountApplied () {
-
+      axios.get(apiPokemon + 'amountApplied').then((response) => { this.amountApplied = response.data })
     },
     getAmountCurrent () {
-
+      console.log(this.inventory.length)
+      // if (this.inventory.length > 1) {
+      // }
     }
   },
   created () {
     this.getBitcoinPrice()
-    this.getLocalPokemons()
+    this.getPokemons()
     this.getNames()
+    this.getAmountApplied()
   }
 })
 </script>
