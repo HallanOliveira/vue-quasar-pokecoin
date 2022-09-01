@@ -8,7 +8,7 @@
       </div>
       <div align="right" class="col-3 q-pa-md text-h6">
        Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
-       Valor atual da carteira: ${{getAmountCurrent()}}
+       Valor atual da carteira: ${{formatPrice(amountCurrent)}}
       </div>
     </div>
     <div class="row q-pa-md">
@@ -24,7 +24,7 @@
         <div class="title-card"> {{ pokemon.name }} </div>
         <q-separator class="separator" color="secondary"/>
         <div class="price">Valor pago: $ {{ formatPrice(pokemon.buy_price) }} </div>
-        <div class="price">Valor atual: $ {{ calculatePokeCoin(pokemon.base_experience) }}</div>
+        <div class="price">Valor atual: $ {{ formatPrice(pokemon.currentPriceUSD) }}</div>
       </div>
       <q-card-actions class="absolute-bottom">
         <q-btn
@@ -159,7 +159,8 @@ export default defineComponent({
       emptyPhoto: 'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg',
       bitcoinPrice: null,
       pokeCoinPrice: null,
-      amountApplied: null,
+      amountApplied: 0,
+      amountCurrent: 0,
       form: {
         id: null,
         name: null,
@@ -179,27 +180,18 @@ export default defineComponent({
     }
   },
   methods: {
-    calculatePokeCoin (baseExperience) {
-      if (baseExperience) {
-        const unitPokePrice = this.bitcoinPrice * 0.00000001
-        return this.formatPrice(unitPokePrice * baseExperience)
-      }
-      return '0.00'
-    },
-    getBitcoinPrice () {
-      axios.get('https://blockchain.info/ticker').then((data) => {
-        this.bitcoinPrice = data.data.USD.last
+    getData () {
+      axios.get(apiPokemon + 'index').then((data) => {
+        this.inventory = data.data.inventory
+        this.amountApplied = data.data.amountApplied
+        this.amountCurrent = data.data.amountCurrent
+        this.optionsNames = data.data.optionsNames
       })
-    },
-    getPokemons () {
-      axios.get(apiPokemon + 'index').then((data) => { this.inventory = data.data })
-    },
-    getNames () {
-      axios.get(apiPokemon + 'names').then((data) => { this.optionsNames = data.data })
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      const test = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      return test
     },
     async addPokemon () {
       if (this.form.name && this.form.buyPrice && this.form.buyDate) {
@@ -243,21 +235,10 @@ export default defineComponent({
     },
     getThumb (pokemon) {
       return pokemon.imagem ?? this.emptyPhoto
-    },
-    getAmountApplied () {
-      axios.get(apiPokemon + 'amountApplied').then((response) => { this.amountApplied = response.data })
-    },
-    getAmountCurrent () {
-      console.log(this.inventory.length)
-      // if (this.inventory.length > 1) {
-      // }
     }
   },
   created () {
-    this.getBitcoinPrice()
-    this.getPokemons()
-    this.getNames()
-    this.getAmountApplied()
+    this.getData()
   }
 })
 </script>
