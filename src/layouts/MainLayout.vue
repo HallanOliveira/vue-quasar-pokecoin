@@ -60,13 +60,11 @@ const linksList = [
     title: 'Carteira',
     caption: '',
     icon: 'fas fa-wallet',
-    color: 'secondary',
     link: '/'
   },
   {
     title: 'Histórico de Transações',
     icon: 'fas fa-history',
-    color: 'secondary',
     link: '/transactions'
   }
 ]
