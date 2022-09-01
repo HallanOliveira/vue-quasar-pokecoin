@@ -10,9 +10,10 @@
     "test": "echo \"No test specified\" && exit 0",
     "build": "quasar build",
     "start": "node server.js",
-    "heroku-postbuild": "npm i -g @quasar/cli && npm install --only=dev && quasar build"
+    "heroku-postbuild": "npm i -g @quasar/cli && npm install && quasar build"
   },
   "dependencies": {
+    "@quasar/app-webpack": "^3.0.0",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "connect-history-api-fallback": "^2.0.0",
@@ -25,7 +26,6 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
-    "@quasar/app-webpack": "^3.0.0",
     "eslint": "^8.10.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.19.1",
