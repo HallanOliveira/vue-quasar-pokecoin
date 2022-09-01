@@ -150,7 +150,7 @@
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
-const apiPokemon = 'https://pokeapi.co/api/v2/pokemon/'
+const apiPokemon = 'https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/'
 
 export default defineComponent({
   name: 'IndexPage',
@@ -211,17 +211,7 @@ export default defineComponent({
       })
     },
     getNames () {
-      const names = []
-      axios.get(apiPokemon + '?limit=9999').then((data) => {
-        data.data.results.forEach((value, key) => {
-          names.push({
-            label: value.name,
-            value: key,
-            description: value.name
-          })
-          this.optionsNames = names
-        })
-      })
+      axios.get(apiPokemon + 'names').then((data) => { console.log(data.data) })
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
