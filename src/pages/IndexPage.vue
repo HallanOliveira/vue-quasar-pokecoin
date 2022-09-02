@@ -17,7 +17,7 @@
       >
       <img :src="getThumb(pokemon)"/>
       <div class="description-card">
-        <div class="title-card"> {{ pokemon.name }} </div>
+        <div class="title-card"> <b>{{ formatName(pokemon.name) }}</b></div>
         <q-separator class="separator" color="secondary"/>
         <div class="price">Valor pago: $ {{ formatPrice(pokemon.buy_price) }} </div>
         <div class="price">Valor atual: $ {{ formatPrice(pokemon.currentPriceUSD) }}</div>
@@ -205,6 +205,10 @@ export default defineComponent({
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    formatName (name) {
+      name = name[0].toUpperCase() + name.substring(1)
+      return name.replace('-', ' ')
     },
     /**
      * request post data of new pokemons on api laravel and refresh page and modal
