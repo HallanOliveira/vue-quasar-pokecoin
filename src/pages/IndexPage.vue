@@ -4,18 +4,18 @@
     <q-separator />
     <div class="row">
       <div class="col-12">
+        <!-- button to add/buy new pokemons -->
         <q-btn color="green" glossy label="Adicionar Pokemon" icon="fas fa-plus" @click="modal=true"/>
       </div>
     </div>
+    <!-- show pokemons on wallet -->
     <div class="row q-pa-md">
       <q-card
         class="cards"
         v-for="(pokemon, index) in inventory"
         :key="index"
       >
-      <img
-        :src="getThumb(pokemon)"
-      />
+      <img :src="getThumb(pokemon)"/>
       <div class="description-card">
         <div class="title-card"> {{ pokemon.name }} </div>
         <q-separator class="separator" color="secondary"/>
@@ -33,10 +33,11 @@
       </q-card-actions>
     </q-card>
     </div>
+    <!-- show portfolio appreciation -->
     <div class="row">
       <div align="right" class="col-12 q-pa-md text-h6">
        Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
-       Valor atual da carteira: ${{formatPrice(amountCurrent)}}
+       Valor atual da carteira: ${{ formatPrice(amountCurrent) }}
       </div>
     </div>
     <!-- modal add pokemon -->
@@ -158,6 +159,9 @@ export default defineComponent({
   name: 'IndexPage',
   data () {
     return {
+      /**
+       * variables of page
+       */
       emptyPhoto: 'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg',
       bitcoinPrice: null,
       pokeCoinPrice: null,
@@ -182,6 +186,9 @@ export default defineComponent({
     }
   },
   methods: {
+    /**
+     * request data from page on api laravel and populate variables
+     */
     getData () {
       axios.get(apiPokemon + 'index').then((data) => {
         this.inventory = data.data.inventory
@@ -190,10 +197,18 @@ export default defineComponent({
         this.optionsNames = data.data.optionsNames
       })
     },
+    /**
+     * format number to price with regex
+     * @param {*} value
+     * @retrun string
+     */
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
+    /**
+     * request post data of new pokemons on api laravel and refresh page and modal
+     */
     async addPokemon () {
       if (this.form.name && this.form.buyPrice && this.form.buyDate) {
         this.form.id = this.form.name.value
@@ -205,6 +220,9 @@ export default defineComponent({
         })
       }
     },
+    /**
+     * request post data of sell pokemons on api laravel and refresh page and modal
+     */
     async sellPokemon () {
       if (this.formSell.id && this.formSell.sellPrice && this.formSell.sellDate) {
         const form = JSON.stringify(this.formSell)
@@ -214,6 +232,10 @@ export default defineComponent({
         })
       }
     },
+    /**
+     * reset modal sell or buy, depending on parameter
+     * @param {boolean} sell
+     */
     resetModal (sell = false) {
       if (sell) {
         this.formSell.id = null
@@ -229,15 +251,27 @@ export default defineComponent({
         this.modal = false
       }
     },
+    /**
+     * open and populate data of sell modal
+     * @param {object} pokemon
+     */
     sellModal (pokemon) {
       this.formSell.id = pokemon.id
       this.formSell.name = pokemon.name
       this.modalSell = true
     },
+    /**
+     * return URL of original image or default image
+     * @param {object} pokemon
+     * @return string
+     */
     getThumb (pokemon) {
       return pokemon.imagem ?? this.emptyPhoto
     }
   },
+  /**
+   * setup page
+   */
   created () {
     this.getData()
   }

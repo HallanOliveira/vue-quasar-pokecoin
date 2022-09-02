@@ -18,6 +18,9 @@ export default {
   name: 'TransactionsPage',
   data () {
     return {
+      /**
+       * attributes from grid component
+       */
       rows: [],
       columns: [
         {
@@ -58,19 +61,14 @@ export default {
       ]
     }
   },
+  /**
+   * get data from laravel api on setup page
+   */
   mounted () {
     axios.get('https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/history')
       .then((data) => {
         this.rows = data.data
       })
-  },
-  methods: {
-    getDataGrid () {
-      axios.get('https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/history')
-        .then((data) => {
-          console.log(data)
-        })
-    }
   }
 }
 </script>
