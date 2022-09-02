@@ -77,7 +77,7 @@
               v-model="form.buyPrice"
               label="Digite o valor da compra"
               mask="#.##"
-              hint="Ao meno 3 números"
+              hint="Ao menos 3 números"
               reverse-fill-mask
               input-class="text-right"
             />
@@ -127,7 +127,7 @@
               label="Valor da venda"
               mask="#.##"
               reverse-fill-mask
-              hint="Ao meno 3 números"
+              hint="Ao menos 3 números"
               input-class="text-right"
             />
           </div>
