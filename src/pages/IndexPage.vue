@@ -123,6 +123,7 @@
               v-model="formSell.sellPrice"
               label="Valor da venda"
               mask="#.##"
+              reverse-fill-mask
               hint="Ao meno 3 números"
               input-class="text-right"
             />
