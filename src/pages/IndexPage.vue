@@ -3,12 +3,8 @@
     <div class="title-wallet text-primary"><i>Carteira</i></div>
     <q-separator />
     <div class="row">
-      <div class="col-9">
+      <div class="col-12">
         <q-btn color="green" glossy label="Adicionar Pokemon" icon="fas fa-plus" @click="modal=true"/>
-      </div>
-      <div align="right" class="col-3 q-pa-md text-h6">
-       Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
-       Valor atual da carteira: ${{formatPrice(amountCurrent)}}
       </div>
     </div>
     <div class="row q-pa-md">
@@ -36,6 +32,12 @@
         />
       </q-card-actions>
     </q-card>
+    </div>
+    <div class="row">
+      <div align="right" class="col-12 q-pa-md text-h6">
+       Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
+       Valor atual da carteira: ${{formatPrice(amountCurrent)}}
+      </div>
     </div>
     <!-- modal add pokemon -->
     <q-dialog v-model="modal">
