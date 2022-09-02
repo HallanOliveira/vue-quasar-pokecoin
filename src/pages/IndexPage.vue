@@ -3,18 +3,14 @@
     <div class="title-wallet text-primary"><i>Carteira</i></div>
     <q-separator />
     <div class="row">
-      <div class="col-9">
+      <div class="col-12">
         <q-btn color="green" glossy label="Adicionar Pokemon" icon="fas fa-plus" @click="modal=true"/>
-      </div>
-      <div align="right" class="col-3 q-pa-md text-h6">
-       Valor total investido: $ {{getAmountApplied()}} <br/>
-       Valor atual da carteira: $ {{getAmountCurrent()}}
       </div>
     </div>
     <div class="row q-pa-md">
       <q-card
         class="cards"
-        v-for="(pokemon, index) in getLocalPokemons()"
+        v-for="(pokemon, index) in inventory"
         :key="index"
       >
       <img
@@ -23,8 +19,8 @@
       <div class="description-card">
         <div class="title-card"> {{ pokemon.name }} </div>
         <q-separator class="separator" color="secondary"/>
-        <div class="price">valor pagor: $ {{ formatPrice(pokemon.buyPrice) }} </div>
-        <div class="price">valor atual: $ {{ formatPrice(pokemon.buyPrice) }} </div>
+        <div class="price">Valor pago: $ {{ formatPrice(pokemon.buy_price) }} </div>
+        <div class="price">Valor atual: $ {{ formatPrice(pokemon.currentPriceUSD) }}</div>
       </div>
       <q-card-actions class="absolute-bottom">
         <q-btn
@@ -32,10 +28,16 @@
           color="secondary"
           label="Vender"
           icon="fa-solid fa-cart-shopping"
-          @click="sellModal"
+          @click="sellModal(pokemon)"
         />
       </q-card-actions>
     </q-card>
+    </div>
+    <div class="row">
+      <div align="right" class="col-12 q-pa-md text-h6">
+       Valor total investido: ${{ formatPrice(amountApplied) }} <br/>
+       Valor atual da carteira: ${{formatPrice(amountCurrent)}}
+      </div>
     </div>
     <!-- modal add pokemon -->
     <q-dialog v-model="modal">
@@ -71,17 +73,17 @@
           <div class="q-pa-md">
             <q-input
               filled
-              v-model="form.price"
+              v-model="form.buyPrice"
               label="Digite o valor da compra"
               mask="#.##"
+              hint="Ao meno 3 números"
               reverse-fill-mask
-              fill-mask
               input-class="text-right"
             />
           </div>
           <div class="q-pa-md">
             <q-input
-              v-model="form.date"
+              v-model="form.buyDate"
               filled
               type="date"
             />
@@ -97,7 +99,7 @@
     <q-dialog v-model="modalSell">
       <q-card class="row modal-size">
         <div class="row col-12">
-          <div class="title-modal col-9">Vender Pokemon {{form.name}}</div>
+          <div class="title-modal col-9">Vender Pokemon: {{formSell.name}}</div>
           <div class="col-3" align="right">
             <q-btn
               flat
@@ -111,7 +113,7 @@
           <div class="q-pa-md">
             <q-select
               filled
-              v-model="form.name"
+              v-model="formSell.name"
               label="Selecione o Pokemon"
               :options="optionsNames"
               disable
@@ -120,17 +122,17 @@
           <div class="q-pa-md">
             <q-input
               filled
-              v-model="form.price"
+              v-model="formSell.sellPrice"
               label="Valor da venda"
               mask="#.##"
               reverse-fill-mask
-              fill-mask
+              hint="Ao meno 3 números"
               input-class="text-right"
             />
           </div>
           <div class="q-pa-md">
             <q-input
-              v-model="form.date"
+              v-model="formSell.sellDate"
               label="Data da venda"
               filled
               type="date"
@@ -140,7 +142,7 @@
 
           <div align="right" class="q-pa-md">
             <q-btn color="primary" label="Cancelar" @click="resetModal(true)"/>
-            <q-btn class="q-ml-md" color="secondary" label="Vender" @click="addPokemon" />
+            <q-btn class="q-ml-md" color="secondary" label="Vender" @click="sellPokemon" />
           </div>
         </q-card-section>
       </q-card>
@@ -151,7 +153,11 @@
 <script>
 import { defineComponent } from 'vue'
 import axios from 'axios'
+<<<<<<< HEAD
 const API_LARAVEL = 'https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/'
+=======
+const apiPokemon = 'https://laravelpokecoinbyhallan.herokuapp.com/api/pokemons/'
+>>>>>>> test
 
 export default defineComponent({
   name: 'IndexPage',
@@ -160,19 +166,28 @@ export default defineComponent({
       emptyPhoto: 'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg',
       bitcoinPrice: null,
       pokeCoinPrice: null,
+      amountApplied: 0,
+      amountCurrent: 0,
       form: {
+        id: null,
         name: null,
-        price: null,
-        date: null,
-        baseExp: null,
-        img: null
+        buyPrice: null,
+        buyDate: null
+      },
+      formSell: {
+        id: null,
+        name: null,
+        sellPrice: null,
+        sellDate: null
       },
       optionsNames: [],
       modal: false,
-      modalSell: false
+      modalSell: false,
+      inventory: []
     }
   },
   methods: {
+<<<<<<< HEAD
     calculatePokeCoin (baseExperience) {
       if (baseExperience) {
         const unitPokePrice = this.bitcoinPrice * 0.00000001
@@ -210,34 +225,71 @@ export default defineComponent({
     getNames () {
       const test = axios.get(API_LARAVEL)
       console.log(test)
+=======
+    getData () {
+      axios.get(apiPokemon + 'index').then((data) => {
+        this.inventory = data.data.inventory
+        this.amountApplied = data.data.amountApplied
+        this.amountCurrent = data.data.amountCurrent
+        this.optionsNames = data.data.optionsNames
+      })
+>>>>>>> test
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     async addPokemon () {
+<<<<<<< HEAD
       if (this.form.name && this.form.price && this.form.date) {
         const test = await this.moreData()
         const test2 = await this.setLocalPokemons()
         if (test && test2) {
           this.resetModal()
         }
+=======
+      if (this.form.name && this.form.buyPrice && this.form.buyDate) {
+        this.form.id = this.form.name.value
+        this.form.name = this.form.name.label
+        const form = JSON.stringify(this.form)
+        axios.post(apiPokemon + 'create/' + form).then(() => {
+          this.getData()
+          this.resetModal()
+        })
+      }
+    },
+    async sellPokemon () {
+      if (this.formSell.id && this.formSell.sellPrice && this.formSell.sellDate) {
+        const form = JSON.stringify(this.formSell)
+        axios.post(apiPokemon + 'sellPokemon/' + form).then(() => {
+          this.getData()
+          this.resetModal(true)
+        })
+>>>>>>> test
       }
     },
     resetModal (sell = false) {
-      this.form.name = null
-      this.form.price = null
-      this.form.date = null
       if (sell) {
+        this.formSell.id = null
+        this.formSell.name = null
+        this.formSell.sellPrice = null
+        this.formSell.sellDate = null
         this.modalSell = false
       } else {
+        this.form.id = null
+        this.form.name = null
+        this.form.buyPrice = null
+        this.form.buyDate = null
         this.modal = false
       }
     },
-    sellModal () {
+    sellModal (pokemon) {
+      this.formSell.id = pokemon.id
+      this.formSell.name = pokemon.name
       this.modalSell = true
     },
     getThumb (pokemon) {
+<<<<<<< HEAD
       return pokemon.img ?? this.emptyPhoto
     },
     getAmountApplied () {
@@ -246,12 +298,13 @@ export default defineComponent({
     },
     getAmountCurrent () {
 
+=======
+      return pokemon.imagem ?? this.emptyPhoto
+>>>>>>> test
     }
   },
   created () {
-    this.getBitcoinPrice()
-    this.getLocalPokemons()
-    this.getNames()
+    this.getData()
   }
 })
 </script>

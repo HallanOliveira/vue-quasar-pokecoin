@@ -9,8 +9,8 @@
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "build": "quasar build",
-    "start": "node server.js",
-    "heroku-postbuild": "yarn && yarn build"
+    "start": "node index.js",
+    "heroku-postbuild": "yarn install --production=false && yarn global add @quasar/cli && yarn build"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
