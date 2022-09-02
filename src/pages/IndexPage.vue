@@ -74,8 +74,8 @@
               v-model="form.buyPrice"
               label="Digite o valor da compra"
               mask="#.##"
+              hint="Ao meno 3 números"
               reverse-fill-mask
-              fill-mask
               input-class="text-right"
             />
           </div>
@@ -123,8 +123,7 @@
               v-model="formSell.sellPrice"
               label="Valor da venda"
               mask="#.##"
-              reverse-fill-mask
-              fill-mask
+              hint="Ao meno 3 números"
               input-class="text-right"
             />
           </div>
@@ -190,8 +189,7 @@ export default defineComponent({
     },
     formatPrice (value) {
       const val = (value / 1).toFixed(2).replace('.', ',')
-      const test = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-      return test
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     async addPokemon () {
       if (this.form.name && this.form.buyPrice && this.form.buyDate) {
@@ -199,7 +197,7 @@ export default defineComponent({
         this.form.name = this.form.name.label
         const form = JSON.stringify(this.form)
         axios.post(apiPokemon + 'create/' + form).then(() => {
-          this.getPokemons()
+          this.getData()
           this.resetModal()
         })
       }
@@ -208,7 +206,7 @@ export default defineComponent({
       if (this.formSell.id && this.formSell.sellPrice && this.formSell.sellDate) {
         const form = JSON.stringify(this.formSell)
         axios.post(apiPokemon + 'sellPokemon/' + form).then(() => {
-          this.getPokemons()
+          this.getData()
           this.resetModal(true)
         })
       }
