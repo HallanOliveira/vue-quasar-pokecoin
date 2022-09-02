@@ -25,16 +25,14 @@ export default {
           required: true,
           label: 'id',
           align: 'left',
-          field: 'id',
-          sortable: true
+          field: 'id'
         },
         {
           name: 'date',
           required: true,
           label: 'Data da transação',
           align: 'left',
-          field: 'date',
-          sortable: true
+          field: 'date'
         },
         {
           name: 'name',
@@ -47,8 +45,7 @@ export default {
           align: 'center',
           label: 'Tipo de transação',
           field: 'type',
-          format: (val) => val === 1 ? 'Compra' : 'Venda',
-          sortable: true
+          format: (val) => val === 1 ? 'Compra' : 'Venda'
         },
         {
           name: 'value',
@@ -56,8 +53,7 @@ export default {
           field: 'value',
           format: (val) => {
             return '$ ' + (val / 1).toFixed(2).replace('.', ',').toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-          },
-          sortable: true
+          }
         }
       ]
     }
